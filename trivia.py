@@ -55,7 +55,7 @@ class DataHandler:
 
         random.shuffle(self.options)
     
-    def checkAnswer(self, answer):
+    def checkAnswer(self, answer: str):
 
         if self.answer == answer:
             self.score += 1
@@ -168,7 +168,7 @@ class Gui:
         self.submitButton = tk.Button(
             self.buttonFrame, 
             text='Submit',
-            command=self.controller.submitButtonPress()
+            command=self.controller.submitButtonPress
         )
 
         self.submitButton.pack(
@@ -180,7 +180,7 @@ class Gui:
         self.nextButton = tk.Button(
             self.buttonFrame,
             text='Next',
-            command=self.controller.nextButtonPress()
+            command=self.controller.nextButtonPress
         )
 
         self.nextButton.pack(
@@ -205,7 +205,7 @@ class Gui:
             self.radioButton.configure(state='disabled')
 
 
-# the controllor
+# the controller
 
 import sys
 
@@ -228,7 +228,7 @@ class Trivia:
         self.view.createTestPrompt()
         self.view.createRadioButtons()
         self.view.createButtons()
-        self.view.mainloop()
+        self.view.master.mainloop()
     
     def initModel(self):
 
@@ -242,19 +242,16 @@ class Trivia:
         self.model.loadAnswer()
         self.model.loadAnswerOptions()
         self.model.shuffleAnswerOptions()
-    
-    def startGame(self):
-
         self.view.testPrompt.configure(text=self.model.questionPrompt)
         self.view.configureRadioButtons(self.model.options)
-    
+
     def submitButtonPress(self):
 
         self.model.checkAnswer(self.view.selectedOption)
         if self.model.checkAnswer == True:
-            self.view.popUpMessageCorrect
+            self.view.popUpMessageCorrect()
         else: 
-            self.view.popUpMessageIncorrect
+            self.view.popUpMessageIncorrect()
     
     def nextButtonPress(self):
 
@@ -272,9 +269,9 @@ if __name__ == '__main__':
     filename = sys.argv[1]
     game = Trivia(filename)
     game.initModel()
-    game.loadQuestion()
     game.initView()
-    game.startGame()
+    game.loadQuestion()
+    
 
 
     
