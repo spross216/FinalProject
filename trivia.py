@@ -27,6 +27,7 @@ class DataHandler:
             reader = csv.DictReader(file)
             self.questions = [row for row in reader]
         self.totalQuestions = len(self.questions)
+        print(self.totalQuestions)
 
     def shuffleQuestions(self):
 
@@ -43,6 +44,7 @@ class DataHandler:
     def loadAnswer(self):
 
         self.answer = self.pullQuestion['answer']
+        
     
     def loadAnswerOptions(self):
 
@@ -59,24 +61,23 @@ class DataHandler:
 
         if self.answer == answer:
             self.score += 1
-            return True
+            self.answerBool = True
         else:
-            return False
+            self.answerBool = False
     
     def nextQuestion(self):
         
-        if self.totalQuestions > self.currentQuestion:
+        if self.totalQuestions > self.currentQuestion+1:
             self.currentQuestion += 1
-            return True
+            self.questionBool = True
         else:
-            return False
+            self.questionBool = False
     
     def totalScore(self):
         
         self.finalScore = (self.score / self.totalQuestions) * 100
         self.finalScoreMessage = (
-            f'You answered {self.score} out of {self.totalQuestions}\
-             correctly for a total score of {self.finalScore}%'
+            f'You answered {self.score} out of {self.totalQuestions} correctly for a total score of {self.finalScore}%'
         )
 
 # the View
@@ -161,14 +162,14 @@ class Gui:
     def configureRadioButtons(self, text: list):
 
         for i, self.radioButton in enumerate(self.radioButtons):
-            self.radioButton.configure(text=text[i])
+            self.radioButton.configure(text=text[i], value=text[i])
 
     def createButtons(self):
 
         self.submitButton = tk.Button(
             self.buttonFrame, 
             text='Submit',
-            command=self.controller.submitButtonPress
+            command=lambda:self.controller.submitButtonPress()
         )
 
         self.submitButton.pack(
@@ -180,7 +181,7 @@ class Gui:
         self.nextButton = tk.Button(
             self.buttonFrame,
             text='Next',
-            command=self.controller.nextButtonPress
+            command=lambda:self.controller.nextButtonPress()
         )
 
         self.nextButton.pack(
@@ -228,7 +229,6 @@ class Trivia:
         self.view.createTestPrompt()
         self.view.createRadioButtons()
         self.view.createButtons()
-        self.view.master.mainloop()
     
     def initModel(self):
 
@@ -246,9 +246,9 @@ class Trivia:
         self.view.configureRadioButtons(self.model.options)
 
     def submitButtonPress(self):
-
-        self.model.checkAnswer(self.view.selectedOption)
-        if self.model.checkAnswer == True:
+    
+        self.model.checkAnswer(self.view.selectedOption.get())
+        if self.model.answerBool == True:
             self.view.popUpMessageCorrect()
         else: 
             self.view.popUpMessageIncorrect()
@@ -256,14 +256,18 @@ class Trivia:
     def nextButtonPress(self):
 
         self.model.nextQuestion()
-        if self.model.nextQuestion == True:
+        if self.model.questionBool == True:
+            self.model.options.clear()
             self.loadQuestion()
-            self.startGame()
         else:
             self.view.disableButtons()
             self.model.totalScore()
             self.view.testPrompt.configure(text=self.model.finalScoreMessage)
             
+    def main(self):
+
+        self.view.master.mainloop()
+
 
 if __name__ == '__main__':
     filename = sys.argv[1]
@@ -271,6 +275,7 @@ if __name__ == '__main__':
     game.initModel()
     game.initView()
     game.loadQuestion()
+    game.main()
     
 
 
