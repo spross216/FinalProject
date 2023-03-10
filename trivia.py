@@ -27,7 +27,6 @@ class DataHandler:
             reader = csv.DictReader(file)
             self.questions = [row for row in reader]
         self.totalQuestions = len(self.questions)
-        print(self.totalQuestions)
 
     def shuffleQuestions(self):
 
